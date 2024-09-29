@@ -21,7 +21,7 @@ interface Violation {
   status: 'active' | 'resolved';
   progress: number;
   timeline?: { date: string; event: string }[];
-  documents?: { name: string; url: string }[];
+  files?: { name: string; url: string }[];
 }
 
 export default function Dashboard() {
@@ -144,16 +144,16 @@ export default function Dashboard() {
                         </div>
                       </div>
                       <div className="mt-4">
-                        <h3 className="font-semibold mb-2">Documents</h3>
-                        {violation.documents && violation.documents.length > 0 ? (
-                          violation.documents.map((doc, index) => (
+                        <h3 className="font-semibold mb-2">Uploaded Files</h3>
+                        {violation.files && violation.files.length > 0 ? (
+                          violation.files.map((file, index) => (
                             <Button key={index} variant="outline" className="mr-2 mb-2">
                               <FileText className="mr-2 h-4 w-4" />
-                              <a href={doc.url} target="_blank" rel="noopener noreferrer">{doc.name}</a>
+                              <a href={file.url} target="_blank" rel="noopener noreferrer">{file.name}</a>
                             </Button>
                           ))
                         ) : (
-                          <p>No documents available.</p>
+                          <p>No files uploaded.</p>
                         )}
                       </div>
                     </DialogContent>

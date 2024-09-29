@@ -1,12 +1,13 @@
 'use client'
 
 import { useState } from 'react';
-import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import { signInWithEmailAndPassword, sendPasswordResetEmail, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { auth } from '@/app/firebase/config';
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useRouter } from 'next/navigation';
+import { FcGoogle } from 'react-icons/fc'; // Import Google icon from react-icons
 
 export function SignIn() {
   const [email, setEmail] = useState('');
@@ -41,13 +42,42 @@ export function SignIn() {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      router.push('/dashboard');
+    } catch (error) {
+      setError('Failed to sign in with Google. Please try again.');
+      console.error('Error signing in with Google:', error);
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Sign In</CardTitle>
         <CardDescription>Enter your credentials to access your account</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
+        <Button 
+          onClick={handleGoogleSignIn} 
+          variant="outline"
+          className="w-full"
+        >
+          <FcGoogle className="mr-2 h-4 w-4" />
+          Sign in with Google
+        </Button>
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">
+              Or continue with
+            </span>
+          </div>
+        </div>
         <form onSubmit={handleSignIn} className="space-y-4">
           <Input
             type="email"
@@ -63,8 +93,8 @@ export function SignIn() {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          {error && <p className="text-red-500">{error}</p>}
-          {resetSent && <p className="text-green-500">Password reset email sent. Please check your inbox.</p>}
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {resetSent && <p className="text-green-500 text-sm">Password reset email sent. Please check your inbox.</p>}
           <div className="flex justify-between items-center">
             <Button type="submit">Sign In</Button>
             <Button type="button" variant="link" onClick={handleForgotPassword}>
